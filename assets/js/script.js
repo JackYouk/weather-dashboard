@@ -9,10 +9,29 @@
 
 
 
+// html containers ----------------------------------------------------------------------------------------------------------------------------
+const searchContainer = $('#searchContainer');
+const contentContainer = $('#contentContainer');
+
+
+// loading spinner -------------------------------------------------------------------------------------------------------------------------
+function loadingSpinner(){
+    let loadingSpinnerContainer = $('<div class="h-100 d-flex justify-content-center align-items-center">')
+    let loadingSpinnerGroup = $('<div class="spinner-border text-primary" role="status">');
+    let loadingSpinnerEl = $('<span class="visually-hidden">');
+    loadingSpinnerGroup.append(loadingSpinnerEl);
+    loadingSpinnerContainer.append(loadingSpinnerGroup);
+    contentContainer.append(loadingSpinnerContainer);
+    // deletes spinner after weather data loads
+    setTimeout(function(){
+        contentContainer.empty();
+    }, 3000)
+}
+
+
 
 // Searchbar ------------------------------------------------------------------------------------------------------------------------------------
 // generate searchbar onto page
-const searchContainer = $('#searchContainer');
 const searchGroup = $('<div class="input-group m-3">');
 let searchInput = $('<input type="text" class="form-control" placeholder="Input City" aria-label="Input City" aria-describedby="button-addon2">')
 let searchButton = $('<button class="btn btn-outline-secondary" type="button" id="button-addon2">')
@@ -37,12 +56,12 @@ searchButton.on('click', function(){
         geocode(currentCity)
 
         //get weather data after geocode data loads
+        loadingSpinner();
         setTimeout(fetchWeatherData, 3000);
     }else{
         alert('Please enter a valid city name.');
     }
 })
-
 
 
 // Search history --------------------------------------------------------------------------------------------------------------------------
@@ -74,6 +93,7 @@ $('.savedCityBtn').on('click', function(){
     // geocode city
     geocode(currentCity);
     //get weather data after geocode data loads
+    loadingSpinner();
     setTimeout(fetchWeatherData, 3000);
 })
 
@@ -92,10 +112,6 @@ function geocode(city){
             currentLongitude = data.data[0].longitude;
         });
 }
-
-
-
-
 
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
 function fetchWeatherData(){
