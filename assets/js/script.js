@@ -3,7 +3,7 @@
 // http://api.positionstack.com/v1/forward?access_key=8ae92ff290e983b9c25ec44f51a128d4&query={INSERTCITYNAMEHERE}&limit=1
 
 // WEATHER API - Gets weather data from a latitude and longitude
-// https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
+// https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=6908f19be130153ae9b75ad61e4a47a3
 
 
 
@@ -24,11 +24,20 @@ searchContainer.append(searchGroup);
 // searchbar functionality
 let currentCity = '';
 
+// when search is clicked
 searchButton.on('click', function(){
     if(searchInput.val() !== ''){
         currentCity = searchInput.val();
+
+        // save input to search history
         saveCity(currentCity);
         genSearchHistory();
+
+        // geocode inputted city
+        geocode(currentCity)
+
+        //get weather data after geocode data loads
+        setTimeout(fetchWeatherData, 3000);
     }else{
         alert('Please enter a valid city name.');
     }
@@ -62,12 +71,43 @@ genSearchHistory();
 // search history functionality
 $('.savedCityBtn').on('click', function(){
     currentCity = $(this).text();
-    console.log(currentCity);
+    // geocode city
+    geocode(currentCity);
+    //get weather data after geocode data loads
+    setTimeout(fetchWeatherData, 3000);
 })
+
+// fetch geocoding api ---------------------------------------------------------------------------------------------------------------------
+let currentLatitude = '';
+let currentLongitude = '';
+
+// geocodes city using geocoding api
+function geocode(city){
+    fetch(`http://api.positionstack.com/v1/forward?access_key=8ae92ff290e983b9c25ec44f51a128d4&query=${city}&limit=1`)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            currentLatitude = data.data[0].latitude;
+            currentLongitude = data.data[0].longitude;
+        });
+}
+
+
 
 
 
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
+function fetchWeatherData(){
+    console.log(currentLatitude);
+    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3`)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+        });
+}
 
 
-// generate weather data content -------------------------------------------------------------------------------------------------------------
+// generate weather data content ------------------------------------------------------------------------------------------------------------
