@@ -143,8 +143,9 @@ function fetchWeatherData(){
 
 // generate weather data content ------------------------------------------------------------------------------------------------------------
 function genWeatherContent(){
-    // generate current weather data
+    // generate current weather data ---------------------------------
     const currentWeatherContainer = $('<div>');
+
     // header with city and date/time and weather icon
     let date = moment.unix(currentUnix).format('L');
     let currentWeatherHeader = $('<h3 class="d-inline-flex align-items-center ml-3 pl-2 headerBG border border-primary rounded">')
@@ -152,22 +153,27 @@ function genWeatherContent(){
     currentWeatherContainer.append(currentWeatherHeader);
     let currentWeatherIcon = $(`<img src="http://openweathermap.org/img/wn/${currentIcon}@2x.png" width="80px"/>`)
     currentWeatherHeader.append(currentWeatherIcon);
+
     // stats
-    let statsGroup = $('<div>');
+    let statsGroup = $('<div class="d-inline-flex align-items-center ml-3 p-1 bg-light border border-dark rounded">');
+    // current weather conditions label
+    // let conditionsLabel = $('<p class="font-italic m-2">')
+    //     .text('Current Conditions -');
+    // statsGroup.append(conditionsLabel);
     // temp
-    let tempEl = $('<p d-inline-flex m-1>')
+    let tempEl = $('<p class="m-1">')
         .text(`Temp: ${currentTemp}°F`);
     statsGroup.append(tempEl);
     // wind
-    let windEl = $('<p d-inline-flex m-1>')
-        .text(`Wind: ${currentWind} mph`);
+    let windEl = $('<p class="m-1">')
+        .text(`Wind: ${currentWind}mph`);
     statsGroup.append(windEl);
     // humidity
-    let humidityEl = $('<p d-inline-flex m-1>')
+    let humidityEl = $('<p class="m-1">')
         .text(`Humidity: ${currentHumidity}%`);
     statsGroup.append(humidityEl);
     // uv index (color changing)
-    let uvEl = $('<p d-inline-flex m-1>')
+    let uvEl = $('<p class="m-1">')
         .text(`UV Index: `);
     let uvElSpan = $('<span>')
         .text(currentUV);
@@ -180,9 +186,26 @@ function genWeatherContent(){
         uvElSpan.addClass('bg-danger p-1 rounded');
     }
     statsGroup.append(uvEl);
-
     currentWeatherContainer.append(statsGroup);
 
+    // append current conditions content to screen
     contentContainer.append(currentWeatherContainer);
-    // generate 5 day forecast
+
+    // generate 5 day forecast -----------------------------------
+
+    // forecast container
+    let forecastGroup = $('<div>');
+
+    // 5 day forecast label
+    let forecastLabel = $('<p class="font-weight-bold d-inline-flex align-items-center m-3 p-1 bg-light border border-dark rounded">')
+        .text('5 Day Forecast:');
+    forecastGroup.append(forecastLabel);
+
+    // generate the 5 forecast cards
+
+
+    // append forecast
+    contentContainer.append(forecastGroup);
+
+    
 }
