@@ -16,6 +16,7 @@ const contentContainer = $('#contentContainer');
 
 // loading spinner -------------------------------------------------------------------------------------------------------------------------
 function loadingSpinner(){
+    contentContainer.empty();
     let loadingSpinnerContainer = $('<div class="h-100 d-flex justify-content-center align-items-center">')
     let loadingSpinnerGroup = $('<div class="spinner-border text-primary" role="status">');
     let loadingSpinnerEl = $('<span class="visually-hidden">');
@@ -25,9 +26,8 @@ function loadingSpinner(){
     // deletes spinner after weather data loads
     setTimeout(function(){
         contentContainer.empty();
-    }, 3000)
+    }, 3500)
 }
-
 
 
 // Searchbar ------------------------------------------------------------------------------------------------------------------------------------
@@ -58,6 +58,9 @@ searchButton.on('click', function(){
         //get weather data after geocode data loads
         loadingSpinner();
         setTimeout(fetchWeatherData, 3000);
+
+        // generate weather forcast
+        setTimeout(genWeatherContent, 4000);
     }else{
         alert('Please enter a valid city name.');
     }
@@ -95,7 +98,10 @@ $('.savedCityBtn').on('click', function(){
     //get weather data after geocode data loads
     loadingSpinner();
     setTimeout(fetchWeatherData, 3000);
+    // generate weather forcast
+    setTimeout(genWeatherContent, 4000);
 })
+
 
 // fetch geocoding api ---------------------------------------------------------------------------------------------------------------------
 let currentLatitude = '';
@@ -113,17 +119,70 @@ function geocode(city){
         });
 }
 
+
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
+let currentIcon = '';
+let currentUnix = '';
+
 function fetchWeatherData(){
-    console.log(currentLatitude);
-    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3`)
+    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
             console.log(data);
+            currentIcon = data.current.weather[0].icon;
+            currentUnix = data.current.dt;
+            currentTemp = data.current.temp;
+            currentWind = data.current.wind_speed;
+            currentHumidity = data.current.humidity;
+            currentUV = data.current.uvi;
         });
 }
 
 
 // generate weather data content ------------------------------------------------------------------------------------------------------------
+function genWeatherContent(){
+    // generate current weather data
+    const currentWeatherContainer = $('<div>');
+    // header with city and date/time and weather icon
+    let date = moment.unix(currentUnix).format('L');
+    let currentWeatherHeader = $('<h3 class="d-inline-flex align-items-center ml-3 pl-2 headerBG border border-primary rounded">')
+        .text(currentCity + ' ' + date);
+    currentWeatherContainer.append(currentWeatherHeader);
+    let currentWeatherIcon = $(`<img src="http://openweathermap.org/img/wn/${currentIcon}@2x.png" width="80px"/>`)
+    currentWeatherHeader.append(currentWeatherIcon);
+    // stats
+    let statsGroup = $('<div>');
+    // temp
+    let tempEl = $('<p d-inline-flex m-1>')
+        .text(`Temp: ${currentTemp}°F`);
+    statsGroup.append(tempEl);
+    // wind
+    let windEl = $('<p d-inline-flex m-1>')
+        .text(`Wind: ${currentWind} mph`);
+    statsGroup.append(windEl);
+    // humidity
+    let humidityEl = $('<p d-inline-flex m-1>')
+        .text(`Humidity: ${currentHumidity}%`);
+    statsGroup.append(humidityEl);
+    // uv index (color changing)
+    let uvEl = $('<p d-inline-flex m-1>')
+        .text(`UV Index: `);
+    let uvElSpan = $('<span>')
+        .text(currentUV);
+    uvEl.append(uvElSpan);
+    if(currentUV < 3){
+        uvElSpan.addClass('bg-success p-1 rounded');
+    }else if(currentUV < 8){
+        uvElSpan.addClass('bg-warning p-1 rounded');
+    }else{
+        uvElSpan.addClass('bg-danger p-1 rounded');
+    }
+    statsGroup.append(uvEl);
+
+    currentWeatherContainer.append(statsGroup);
+
+    contentContainer.append(currentWeatherContainer);
+    // generate 5 day forecast
+}
