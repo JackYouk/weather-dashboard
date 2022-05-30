@@ -53,10 +53,10 @@ searchButton.on('click', function(){
 
         //get weather data after geocode data loads
         loadingSpinner();
-        setTimeout(fetchWeatherData, 3000);
+        setTimeout(fetchWeatherData, 4500);
 
         // generate weather forcast
-        setTimeout(genWeatherContent, 4000);
+        setTimeout(genWeatherContent, 5500);
     }else{
         alert('Please enter a valid city name.');
     }
@@ -93,9 +93,9 @@ $('.savedCityBtn').on('click', function(){
     geocode(currentCity);
     //get weather data after geocode data loads
     loadingSpinner();
-    setTimeout(fetchWeatherData, 3000);
+    setTimeout(fetchWeatherData, 4500);
     // generate weather forcast
-    setTimeout(genWeatherContent, 4000);
+    setTimeout(genWeatherContent, 5500);
 })
 
 
@@ -110,6 +110,7 @@ function geocode(city){
             return response.json();
         })
         .then(function (data) {
+            console.log(data);
             currentLatitude = data.latt;
             currentLongitude = data.longt;
         });
@@ -128,6 +129,7 @@ function fetchWeatherData(){
             return response.json();
         })
         .then(function (data) {
+            console.log(data);
             // weather data for current day
             currentIcon = data.current.weather[0].icon;
             currentUnix = data.current.dt;
