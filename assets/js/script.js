@@ -120,13 +120,14 @@ function geocode(city){
 }
 
 
+
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
 let currentIcon = '';
 let currentUnix = '';
 let forecastDataArr = [];
 
 function fetchWeatherData(){
-    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
+    fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
         .then(function (response) {
             return response.json();
         })
