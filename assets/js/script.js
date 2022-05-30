@@ -23,10 +23,6 @@ function loadingSpinner(){
     loadingSpinnerGroup.append(loadingSpinnerEl);
     loadingSpinnerContainer.append(loadingSpinnerGroup);
     contentContainer.append(loadingSpinnerContainer);
-    // deletes spinner after weather data loads
-    setTimeout(function(){
-        contentContainer.empty();
-    }, 3500)
 }
 
 
@@ -109,13 +105,14 @@ let currentLongitude = '';
 
 // geocodes city using geocoding api
 function geocode(city){
-    fetch(`http://api.positionstack.com/v1/forward?access_key=8ae92ff290e983b9c25ec44f51a128d4&query=${city}&limit=1`)
+    fetch(`https://geocode.xyz/${city}&auth=135811378618740114104x53123?json=1`)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            currentLatitude = data.data[0].latitude;
-            currentLongitude = data.data[0].longitude;
+            console.log(data);
+            currentLatitude = data.latt;
+            currentLongitude = data.longt;
         });
 }
 
@@ -127,7 +124,7 @@ let currentUnix = '';
 let forecastDataArr = [];
 
 function fetchWeatherData(){
-    fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
+    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
         .then(function (response) {
             return response.json();
         })
