@@ -34,7 +34,7 @@ function loadingSpinner(){
 // generate searchbar onto page
 const searchGroup = $('<div class="input-group m-3">');
 let searchInput = $('<input type="text" class="form-control" placeholder="Input City" aria-label="Input City" aria-describedby="button-addon2">')
-let searchButton = $('<button class="btn btn-outline-secondary" type="button" id="button-addon2">')
+let searchButton = $('<button class="btn btn-outline-secondary mr-3" type="button" id="button-addon2">')
     .text('Search');
 searchGroup.append(searchInput);
 searchGroup.append(searchButton);
@@ -123,6 +123,7 @@ function geocode(city){
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
 let currentIcon = '';
 let currentUnix = '';
+let forecastDataArr = [];
 
 function fetchWeatherData(){
     fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
@@ -130,19 +131,34 @@ function fetchWeatherData(){
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
+            // weather data for current day
             currentIcon = data.current.weather[0].icon;
             currentUnix = data.current.dt;
             currentTemp = data.current.temp;
             currentWind = data.current.wind_speed;
             currentHumidity = data.current.humidity;
             currentUV = data.current.uvi;
+            // 5day forecast data (added to forecastDataArr) as objects
+            forecastDataArr = [];
+            for(let i = 1; i < 6; i++){
+                let forecastObject = {
+                    unix: data.daily[i].dt,
+                    icon: data.daily[i].weather[0].icon,
+                    temp: data.daily[i].temp.max,
+                    wind: data.daily[i].wind_speed,
+                    humidity: data.daily[i].humidity,
+                }
+                forecastDataArr.push(forecastObject);
+            }
         });
 }
 
 
 // generate weather data content ------------------------------------------------------------------------------------------------------------
 function genWeatherContent(){
+    // clear content container
+    contentContainer.empty();
+
     // generate current weather data ---------------------------------
     const currentWeatherContainer = $('<div>');
 
@@ -194,7 +210,7 @@ function genWeatherContent(){
     // generate 5 day forecast -----------------------------------
 
     // forecast container
-    let forecastGroup = $('<div>');
+    const forecastGroup = $('<div>');
 
     // 5 day forecast label
     let forecastLabel = $('<p class="font-weight-bold d-inline-flex align-items-center m-3 p-1 bg-light border border-dark rounded">')
@@ -202,10 +218,44 @@ function genWeatherContent(){
     forecastGroup.append(forecastLabel);
 
     // generate the 5 forecast cards
+    // card group
+    const cardGroup = $('<div class="d-flex row justify-content-center">');
 
+    // for loop to create individual cards
+    for(let i = 0; i <forecastDataArr.length; i++){
+        // card div
+        let cardDiv = $('<div class="col-9 col-md-2 card p-1 m-3" style="width: 20px;">');
+        // card image
+        let cardImg = $(`<img src="http://openweathermap.org/img/wn/${forecastDataArr[i].icon}@2x.png" width="10px" class="card-img-top">`);
+        cardDiv.append(cardImg);
+        // cardbody div
+        let cardBodyDiv = $('<div class="card-body">');
+            // date header
+            let forecastDate = moment.unix(forecastDataArr[i].unix).format('M/D/YY');
+            let cardHeader = $('<h5 class="card-title">')
+                .text(forecastDate);
+            cardBodyDiv.append(cardHeader);
+            // temp p
+            let cardTemp = $('<p class="card-text">')
+                .text(`Temp: ${forecastDataArr[i].temp}°F`);
+            cardBodyDiv.append(cardTemp);
+            // wind p
+            let cardWind = $('<p class="card-text">')
+                .text(`Wind: ${forecastDataArr[i].wind}mph`);
+            cardBodyDiv.append(cardWind);
+            // humidity p
+            let cardHumidity = $('<p class="card-text">')
+                .text(`Humidity: ${forecastDataArr[i].humidity}%`);
+            cardBodyDiv.append(cardHumidity);
+
+            cardDiv.append(cardBodyDiv);
+        // append to cardGroup
+        cardGroup.append(cardDiv);
+    }
+
+    // append cardgroup to forecastGroup
+    forecastGroup.append(cardGroup);
 
     // append forecast
     contentContainer.append(forecastGroup);
-
-    
 }
