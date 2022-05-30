@@ -110,7 +110,6 @@ function geocode(city){
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
             currentLatitude = data.latt;
             currentLongitude = data.longt;
         });
@@ -165,7 +164,7 @@ function genWeatherContent(){
     let currentWeatherHeader = $('<h3 class="d-inline-flex align-items-center ml-3 pl-2 headerBG border border-primary rounded">')
         .text(currentCity + ' ' + date);
     currentWeatherContainer.append(currentWeatherHeader);
-    let currentWeatherIcon = $(`<img src="http://openweathermap.org/img/wn/${currentIcon}@2x.png" width="80px"/>`)
+    let currentWeatherIcon = $(`<img src="./assets/images/${currentIcon}@2x.png" width="80px"/>`)
     currentWeatherHeader.append(currentWeatherIcon);
 
     // stats
@@ -224,7 +223,7 @@ function genWeatherContent(){
         // card div
         let cardDiv = $('<div class="col-9 col-md-2 card p-1 m-3" style="width: 20px;">');
         // card image
-        let cardImg = $(`<img src="http://openweathermap.org/img/wn/${forecastDataArr[i].icon}@2x.png" width="10px" class="card-img-top">`);
+        let cardImg = $(`<img src="./assets/images/${forecastDataArr[i].icon}@2x.png" width="10px" class="card-img-top">`);
         cardDiv.append(cardImg);
         // cardbody div
         let cardBodyDiv = $('<div class="card-body">');
