@@ -7,3 +7,4 @@ Deployed App url: https://jackyouk.github.io/weather-dashboard/
 Weather dashboard app. When user inputs a city, app generates current weather conditions and a 5-day forecast.
 App is mobile responsive.
 App designed using open weather map one call api, position stack geocoding api, bootstrap, jQuery, and moment.js.
+***WARNING*** The APIs I used are pretty slow, so if no content displays when a city is entered, then just try again. It probably did not load correctly on the first attempt. Thanks.
