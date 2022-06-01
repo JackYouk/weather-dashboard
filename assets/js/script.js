@@ -93,6 +93,16 @@ function genSearchHistory(){
 }
 genSearchHistory();
 
+$('.savedCityBtn').on('click', function(){
+    currentCity = $(this).text();
+    //get weather data after geocode data loads
+    loadingSpinner();
+    // setTimeout(fetchWeatherData, 4500);
+    fetchWeatherData(currentCity);
+    // generate weather forcast
+    setTimeout(genWeatherContent, 3000);
+})
+
 
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
 let currentLatitude = '';
