@@ -50,7 +50,6 @@ searchButton.on('click', function(){
 
         //get weather data after geocode data loads
         loadingSpinner();
-        // setTimeout(fetchWeatherData, 4500);
         fetchWeatherData(currentCity);
         // generate weather forcast
         setTimeout(genWeatherContent, 3000);
@@ -174,10 +173,6 @@ function genWeatherContent(){
 
     // stats
     let statsGroup = $('<div class="d-inline-flex align-items-center ml-3 p-1 bg-light border border-dark rounded">');
-    // current weather conditions label
-    // let conditionsLabel = $('<p class="font-italic m-2">')
-    //     .text('Current Conditions -');
-    // statsGroup.append(conditionsLabel);
     // temp
     let tempEl = $('<p class="m-1">')
         .text(`Temp: ${currentTemp}°F`);
