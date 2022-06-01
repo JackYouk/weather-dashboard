@@ -89,67 +89,76 @@ genSearchHistory();
 // search history functionality
 $('.savedCityBtn').on('click', function(){
     currentCity = $(this).text();
-    // geocode city
-    geocode(currentCity);
     //get weather data after geocode data loads
     loadingSpinner();
-    setTimeout(fetchWeatherData, 4500);
+    // setTimeout(fetchWeatherData, 4500);
+    fetchWeatherData(currentCity);
     // generate weather forcast
-    setTimeout(genWeatherContent, 5500);
+    setTimeout(genWeatherContent, 3000);
 })
 
-
-// fetch geocoding api ---------------------------------------------------------------------------------------------------------------------
+// fetch weather data api -------------------------------------------------------------------------------------------------------------------
 let currentLatitude = '';
 let currentLongitude = '';
+let currentIcon = '';
+let currentUnix = '';
+let currentTemp = '';
+let currentWind = '';
+let currentHumidity = '';
+let forecastDataArr = [];
 
-// geocodes city using geocoding api
-function geocode(city){
-    fetch(`https://geocode.xyz/${city}&auth=135811378618740114104x53123?json=1`)
+function fetchWeatherData(city){
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
             console.log(data);
-            currentLatitude = data.latt;
-            currentLongitude = data.longt;
+
+            // checks to make sure city was entered correctly
+            if(data.cod === '404'){
+                alert('Please Enter a Valid City');
+                return;
+            }else if(data.cod === '200'){
+                // weather data for current day
+                currentLatitude = data.city.coord.lat;
+                currentLongitude = data.city.coord.lon;
+                currentIcon = data.list[0].weather[0].icon;
+                currentUnix = data.list[0].dt;
+                currentTemp = data.list[0].main.temp;
+                currentWind = data.list[0].wind.speed;
+                currentHumidity = data.list[0].main.humidity;
+                fetchUVI(currentLatitude, currentLongitude);
+                // 5day forecast data (added to forecastDataArr) as objects
+                forecastDataArr = [];
+                for(let i = 1; i < 6; i++){
+                    let forecastObject = {
+                        unix: data.list[i].dt,
+                        icon: data.list[i].weather[0].icon,
+                        temp: data.list[i].main.temp,
+                        wind: data.list[i].wind.speed,
+                        humidity: data.list[i].main.humidity,
+                    }
+                    forecastDataArr.push(forecastObject);
+                }
+                return;
+            }else{
+                alert('Something went wrong, please try again.');
+                return;
+            }
         });
 }
 
-
-
-// fetch weather data api -------------------------------------------------------------------------------------------------------------------
-let currentIcon = '';
-let currentUnix = '';
-let forecastDataArr = [];
-
-function fetchWeatherData(){
-    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentLatitude}&lon=${currentLongitude}&appid=6908f19be130153ae9b75ad61e4a47a3&units=imperial`)
+function fetchUVI(lat, long){
+    fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&appid=6908f19be130153ae9b75ad61e4a47a3`)
         .then(function (response) {
             return response.json();
         })
-        .then(function (data) {
+        .then(function (data){
             console.log(data);
-            // weather data for current day
-            currentIcon = data.current.weather[0].icon;
-            currentUnix = data.current.dt;
-            currentTemp = data.current.temp;
-            currentWind = data.current.wind_speed;
-            currentHumidity = data.current.humidity;
             currentUV = data.current.uvi;
-            // 5day forecast data (added to forecastDataArr) as objects
-            forecastDataArr = [];
-            for(let i = 1; i < 6; i++){
-                let forecastObject = {
-                    unix: data.daily[i].dt,
-                    icon: data.daily[i].weather[0].icon,
-                    temp: data.daily[i].temp.max,
-                    wind: data.daily[i].wind_speed,
-                    humidity: data.daily[i].humidity,
-                }
-                forecastDataArr.push(forecastObject);
-            }
-        });
+            return;
+        })
 }
 
 
@@ -201,6 +210,7 @@ function genWeatherContent(){
         uvElSpan.addClass('bg-danger p-1 rounded');
     }
     statsGroup.append(uvEl);
+    // statsGroup.append(uvEl);
     currentWeatherContainer.append(statsGroup);
 
     // append current conditions content to screen
