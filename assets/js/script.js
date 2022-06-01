@@ -94,7 +94,6 @@ function genSearchHistory(){
 genSearchHistory();
 
 
-
 // fetch weather data api -------------------------------------------------------------------------------------------------------------------
 let currentLatitude = '';
 let currentLongitude = '';
